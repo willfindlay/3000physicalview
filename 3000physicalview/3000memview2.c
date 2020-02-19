@@ -1,4 +1,3 @@
-#include <stdio.h>
 /* 3000memview2.c  Userland demonstration of 3000physicalview ioctl interface
  * Copyright (C) 2020  William Findlay
  *
@@ -15,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>. */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
