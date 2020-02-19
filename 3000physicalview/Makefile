@@ -4,10 +4,10 @@ obj-m += 3000physicalview.o
 
 all: 3000memview2 3000physicalview.ko
 
-3000physicalview.ko:
+3000physicalview.ko: 3000physicalview.c 3000physicalview.h
 	make ARCH=x86_64 -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
-3000memview2:
+3000memview2: 3000memview2.c
 	gcc -o 3000memview2 3000memview2.c
 
 insert:
