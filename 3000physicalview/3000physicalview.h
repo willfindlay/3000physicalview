@@ -21,8 +21,7 @@
 #ifndef PHYSICALVIEW_H
 #define PHYSICALVIEW_H
 
-#ifndef USERSPACE
-/* The following is used only in kernelspace */
+#ifndef USERSPACE /* Kernelspace only */
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/fs.h>
@@ -43,11 +42,12 @@ MODULE_AUTHOR("William Findlay");
 MODULE_LICENSE("GPL");
 MODULE_VERSION("0.0.1");
 
-#else
-#include <sys/ioctl.h> /* Include sys/ioctl.h in userspace only */
+#else /* Userspace only */
+#include <sys/ioctl.h>
 #endif
 
-/* The following is used in userspace and kernelspace */
+/* Both userspace and kernelspace */
+
 struct physicalview_memory
 {
     unsigned long virt;
