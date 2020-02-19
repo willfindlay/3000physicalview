@@ -21,35 +21,35 @@ static unsigned long get_physical(unsigned long addr)
     pgd = pgd_offset(current->mm, addr);
     if (!pgd || pgd_none(*pgd) || pgd_bad(*pgd))
     {
-        printk(KERN_ERR "Invalid pgd\n");
+        printk(KERN_ERR "Invalid pgd for address 0x%016lx\n", addr);
         return phys;
     }
 
     p4d = p4d_offset(pgd, addr);
     if (!p4d || p4d_none(*p4d) || p4d_bad(*p4d))
     {
-        printk(KERN_ERR "Invalid p4d\n");
+        printk(KERN_ERR "Invalid p4d for address 0x%016lx\n", addr);
         return phys;
     }
 
     pud = pud_offset(p4d, addr);
     if (!pud || pud_none(*pud) || pud_bad(*pud))
     {
-        printk(KERN_ERR "Invalid pud\n");
+        printk(KERN_ERR "Invalid pud for address 0x%016lx\n", addr);
         return phys;
     }
 
     pmd = pmd_offset(pud, addr);
     if (!pmd || pmd_none(*pmd) || pmd_bad(*pmd))
     {
-        printk(KERN_ERR "Invalid pmd\n");
+        printk(KERN_ERR "Invalid pmd for address 0x%016lx\n", addr);
         return phys;
     }
 
     pte = pte_offset_map(pmd, addr);
     if (!pte || pte_none(*pte))
     {
-        printk(KERN_ERR "Invalid pte\n");
+        printk(KERN_ERR "Invalid pte for address 0x%016lx\n", addr);
         return phys;
     }
 
@@ -71,11 +71,19 @@ static int physicalview_release(struct inode * inode, struct file * file)
     return 0;
 }
 
+/* http://www.cs.otago.ac.nz/cosc440/labs/lab06.pdf */
 static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned long addr)
 {
     unsigned long phys = get_physical(addr);
+
+    if (!phys)
+    {
+        return -EFAULT;
+    }
+
     printk(KERN_INFO "virt 0x%016lx maps to phys 0x%016lx\n", addr, phys);
-    return 0;
+
+    return phys;
 }
 
 static struct file_operations fops = {
