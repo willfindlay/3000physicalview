@@ -71,7 +71,6 @@ static int physicalview_release(struct inode * inode, struct file * file)
     return 0;
 }
 
-/* http://www.cs.otago.ac.nz/cosc440/labs/lab06.pdf */
 static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned long addr)
 {
     struct physicalview_memory *mem;
