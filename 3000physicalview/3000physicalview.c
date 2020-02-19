@@ -74,16 +74,50 @@ static int physicalview_release(struct inode * inode, struct file * file)
 /* http://www.cs.otago.ac.nz/cosc440/labs/lab06.pdf */
 static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned long addr)
 {
-    unsigned long phys = get_physical(addr);
-
-    if (!phys)
+    switch cmd
     {
-        return -EFAULT;
+        case PHYSICALVIEW_WALK:
+            unsigned long phys;
+
+            struct physicalview_memory *mem = kmalloc(sizeof(struct physicalview_memory), GFP_KERNEL);
+            if (!mem)
+            {
+                printk(KERN_ERR "Unable to allocate space for struct\n");
+                return -EFAULT;
+            }
+
+            if (raw_copy_from_user(mem, (struct physicalview_memory *)addr,
+                        sizeof(struct physicalview_memory)))
+            {
+                printk(KERN_ERR "Unable to copy struct from user\n");
+                kfree(mem);
+                return -EFAULT;
+            }
+
+            mem->phys = get_physical(mem->virt);
+            //if (!mem->phys)
+            //{
+            //    kfree(mem);
+            //    return -EFAULT;
+            //}
+
+            printk(KERN_INFO "virt 0x%016lx maps to phys 0x%016lx\n", addr, phys);
+
+            if (raw_copy_to_user((struct physicalview_memory *)addr, mem,
+                        sizeof(struct physicalview_memory)))
+            {
+                printk(KERN_ERR "Unable to copy struct to user\n");
+                kfree(mem);
+                return -EFAULT;
+            }
+
+            kfree(mem);
+            break;
+        default:
+            return -EINVAL;
     }
 
-    printk(KERN_INFO "virt 0x%016lx maps to phys 0x%016lx\n", addr, phys);
-
-    return phys;
+    return 0;
 }
 
 static struct file_operations fops = {

@@ -1,6 +1,8 @@
 #ifndef PHYSICALVIEW_H
 #define PHYSICALVIEW_H
 
+#ifndef USERSPACE
+/* The following is used only in kernelspace */
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/fs.h>
@@ -17,5 +19,20 @@ MODULE_DESCRIPTION("Walk page table for userspace virtual address.");
 MODULE_AUTHOR("William Findlay");
 MODULE_LICENSE("GPL");
 MODULE_VERSION("0.0.1");
+
+#else
+#include <sys/ioctl.h> /* Include sys/ioctl.h in userspace only */
+#endif
+
+/* The following is used in userspace and kernelspace */
+struct physicalview_memory
+{
+    unsigned long virt;
+    unsigned long phys;
+};
+
+/* Ioctl stuff */
+#define PHYSICALVIEW_BASE 'k'
+#define PHYSICALVIEW_WALK _IORW(PHYSICALVIEW_BASE, 1, struct physicalview_memory)
 
 #endif /* PHYSICALVIEW_H */
