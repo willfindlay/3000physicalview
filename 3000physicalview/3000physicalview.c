@@ -25,6 +25,7 @@ static unsigned long get_physical(unsigned long addr)
         return phys;
     }
 
+    /* Find p4d */
     p4d = p4d_offset(pgd, addr);
     if (!p4d || p4d_none(*p4d) || p4d_bad(*p4d))
     {
@@ -32,6 +33,7 @@ static unsigned long get_physical(unsigned long addr)
         return phys;
     }
 
+    /* Find pud */
     pud = pud_offset(p4d, addr);
     if (!pud || pud_none(*pud) || pud_bad(*pud))
     {
@@ -39,6 +41,7 @@ static unsigned long get_physical(unsigned long addr)
         return phys;
     }
 
+    /* Find pmd */
     pmd = pmd_offset(pud, addr);
     if (!pmd || pmd_none(*pmd) || pmd_bad(*pmd))
     {
@@ -46,6 +49,7 @@ static unsigned long get_physical(unsigned long addr)
         return phys;
     }
 
+    /* Find pte */
     pte = pte_offset_map(pmd, addr);
     if (!pte || pte_none(*pte))
     {
@@ -53,30 +57,36 @@ static unsigned long get_physical(unsigned long addr)
         return phys;
     }
 
+    /* Get physical address of page table entry */
     phys = pte->pte & PTE_PFN_MASK;
 
     return phys;
 }
 
 /* Define file operations below this line ------------------- */
+
+/* Callback to device open */
 static int physicalview_open(struct inode * inode, struct file * file)
 {
     printk(KERN_INFO "3000physicalview open\n");
     return 0;
 }
 
+/* Callback to device close */
 static int physicalview_release(struct inode * inode, struct file * file)
 {
     printk(KERN_INFO "3000physicalview closed\n");
     return 0;
 }
 
+/* Callback to device ioctl */
 static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned long addr)
 {
     struct physicalview_memory *mem;
     switch (cmd)
     {
         case PHYSICALVIEW_WALK:
+            /* Allocate kernel memory for our struct */
             mem = kmalloc(sizeof(struct physicalview_memory), GFP_KERNEL);
             if (!mem)
             {
@@ -84,6 +94,7 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
                 return -EFAULT;
             }
 
+            /* Get virt from userspace */
             if (raw_copy_from_user(mem, (struct physicalview_memory *)addr,
                         sizeof(struct physicalview_memory)))
             {
@@ -92,10 +103,13 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
                 return -EFAULT;
             }
 
+            /* Call helper to get physical mapping for virtual address */
             mem->phys = get_physical(mem->virt);
 
+            /* Print information to kernel logs because we can */
             printk(KERN_INFO "virt 0x%016lx maps to phys 0x%016lx\n", mem->virt, mem->phys);
 
+            /* Give phys back to userspace */
             if (raw_copy_to_user((struct physicalview_memory *)addr, mem,
                         sizeof(struct physicalview_memory)))
             {
@@ -104,6 +118,7 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
                 return -EFAULT;
             }
 
+            /* Cleanup, cleanup, everybody do their share */
             kfree(mem);
             break;
         default:
@@ -113,12 +128,14 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
     return 0;
 }
 
+/* Register file operations */
 static struct file_operations fops = {
     .open = physicalview_open,
     .release = physicalview_release,
     .unlocked_ioctl = physicalview_ioctl,
 };
 
+/* World readable and writable because... security? */
 static char *physicalview_devnode(struct device *device, umode_t *mode)
 {
     if (mode)
@@ -133,20 +150,24 @@ int init_module(void)
 {
     printk(KERN_INFO "3000physicalview initalizing\n");
 
+    /* Register character device */
     major_number = register_chrdev(0, DEVICE_NAME, &fops);
     if (major_number < 0)
     {
         goto failed_chrdevreg;
     }
 
+    /* Create device class */
     class = class_create(THIS_MODULE, CLASS_NAME);
     if (IS_ERR(class))
     {
         goto failed_classreg;
     }
 
+    /* Set devnode to set our "super secure" permissions from above */
     class->devnode = physicalview_devnode;
 
+    /* Create device */
     device = device_create(class, NULL, MKDEV(major_number, 0), NULL, DEVICE_NAME);
     if (IS_ERR(device))
     {
@@ -157,6 +178,9 @@ int init_module(void)
 
     return 0;
 
+    /* NOTREACHED... */
+
+    /* Errors here */
 failed_devreg:
     printk(KERN_ERR "Failed to register 3000physicalview device!\n");
     class_unregister(class);
@@ -173,9 +197,11 @@ failed_chrdevreg:
 /* Module destructor callback */
 void cleanup_module(void)
 {
+    /* Cleanup, cleanup, everybody do their share */
     device_destroy(class, MKDEV(major_number, 0));
     class_unregister(class);
     class_destroy(class);
     unregister_chrdev(major_number, DEVICE_NAME);
+
     printk(KERN_INFO "3000physicalview cleanup complete\n");
 }
