@@ -1,3 +1,23 @@
+/* 3000physicalview.c  A kernel module to expose virtual->physical memory mappings in userspace as an ioctl
+ * Copyright (C) 2020  William Findlay
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>. */
+
+/* Warning: This module is extremely insecure.
+ * It is designed purely for teaching purposes.
+ * Using it is stupid unless you are in COMP3000. */
+
 #include "3000physicalview.h"
 
 static struct device *device = NULL;
