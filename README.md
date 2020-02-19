@@ -1,10 +1,10 @@
 # 3000physicalview
 
-Loadable kernel module to run a page table walk on a userland virtual address.
+Loadable kernel module to run a page table walk on a userspace virtual address.
 
 Exposes an `ioctl` call for returning physical mapping given virtual mapping.
 
-**WARNING:** This module is unsecure. It should be used for teaching purposes only. Usage in a virtualized environment is recommended.
+**WARNING:** This module is insecure. It should be used for teaching purposes only. Usage in a virtualized environment is recommended.
 
 ## Usage
 
@@ -30,13 +30,13 @@ int main()
   struct physicalview_memory mem = {
     .virt = (unsigned long)&var;
   };
-  
+
   int fd = open("/dev/3000physicalview", O_RDONLY);
-  
+
   ioctl(fd, PHYSICALVIEW_WALK, (unsigned long)&mem);
-  
+
   printf("%lx maps to %lx\n", mem.virt, mem.phys);
-  
+
   return 0;
 }
 ```
