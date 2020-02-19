@@ -4,6 +4,8 @@ Loadable kernel module to run a page table walk on a userland virtual address.
 
 Exposes an `ioctl` call for returning physical mapping given virtual mapping.
 
+**WARNING:** This module is unsecure. It should be used for teaching purposes only. Usage in a virtualized environment is recommended.
+
 ## Usage
 
 1. `git clone https://github.com/willfindlay/3000physicalview && cd 3000physicalview`
