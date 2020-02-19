@@ -41,7 +41,7 @@ void report_memory(char *prefix, int fd, unsigned long virt)
 
     if (!mem.phys)
     {
-        fprintf(stderr, "%s 0x%016lx -> UNKNOWN\n", prefix, mem.virt);
+        printf("%s 0x%016lx -> UNKNOWN\n", prefix, mem.virt);
         return;
     }
 
