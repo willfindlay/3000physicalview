@@ -35,6 +35,7 @@ static unsigned long get_physical(unsigned long addr)
     pmd_t *pmd;
     pte_t *pte;
 
+    unsigned long pfn = 0;
     unsigned long phys = 0;
 
     /* Find pgd */
@@ -78,7 +79,8 @@ static unsigned long get_physical(unsigned long addr)
     }
 
     /* Get physical address of page table entry */
-    phys = pte->pte & PTE_PFN_MASK;
+    pfn = pte->pte & PTE_PFN_MASK;
+    phys = (pfn << PAGE_SHIFT) + (addr % PAGE_SIZE);
 
     return phys;
 }
