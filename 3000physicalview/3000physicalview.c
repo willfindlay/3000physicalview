@@ -94,11 +94,6 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
             }
 
             mem->phys = get_physical(mem->virt);
-            //if (!mem->phys)
-            //{
-            //    kfree(mem);
-            //    return -EFAULT;
-            //}
 
             printk(KERN_INFO "virt 0x%016lx maps to phys 0x%016lx\n", mem->virt, mem->phys);
 
