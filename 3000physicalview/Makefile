@@ -1,6 +1,6 @@
 obj-m += 3000physicalview.o
 
-.PHONY: all, clean
+.PHONY: all, clean, insert, remove
 
 all: 3000memview2 3000physicalview.ko
 
