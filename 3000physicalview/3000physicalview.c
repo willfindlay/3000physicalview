@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>. */
 
-/* Warning: This module is extremely unsecure.
+/* Warning: This module is extremely insecure.
  * It is designed purely for teaching purposes.
  * Using it is stupid unless you are in COMP3000. */
 
