@@ -74,12 +74,11 @@ static int physicalview_release(struct inode * inode, struct file * file)
 /* http://www.cs.otago.ac.nz/cosc440/labs/lab06.pdf */
 static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned long addr)
 {
-    switch cmd
+    struct physicalview_memory *mem;
+    switch (cmd)
     {
         case PHYSICALVIEW_WALK:
-            unsigned long phys;
-
-            struct physicalview_memory *mem = kmalloc(sizeof(struct physicalview_memory), GFP_KERNEL);
+            mem = kmalloc(sizeof(struct physicalview_memory), GFP_KERNEL);
             if (!mem)
             {
                 printk(KERN_ERR "Unable to allocate space for struct\n");
@@ -101,7 +100,7 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
             //    return -EFAULT;
             //}
 
-            printk(KERN_INFO "virt 0x%016lx maps to phys 0x%016lx\n", addr, phys);
+            printk(KERN_INFO "virt 0x%016lx maps to phys 0x%016lx\n", mem->virt, mem->phys);
 
             if (raw_copy_to_user((struct physicalview_memory *)addr, mem,
                         sizeof(struct physicalview_memory)))

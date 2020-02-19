@@ -9,6 +9,9 @@
 #include <linux/device.h>
 #include <linux/string.h>
 #include <linux/sched.h>
+#include <linux/gfp.h>
+#include <linux/slab.h>
+#include <asm/uaccess.h>
 #include <asm/pgtable.h>
 #include <asm/pgtable_types.h>
 
@@ -33,6 +36,6 @@ struct physicalview_memory
 
 /* Ioctl stuff */
 #define PHYSICALVIEW_BASE 'k'
-#define PHYSICALVIEW_WALK _IORW(PHYSICALVIEW_BASE, 1, struct physicalview_memory)
+#define PHYSICALVIEW_WALK _IOWR(PHYSICALVIEW_BASE, 1, struct physicalview_memory)
 
 #endif /* PHYSICALVIEW_H */
