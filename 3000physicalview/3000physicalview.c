@@ -165,7 +165,7 @@ static char *physicalview_devnode(struct device *device, umode_t *mode)
     return NULL;
 }
 
-/* Entry and exit points below this line -------------------- */
+/* Entry and exit points below this line ------------------------------------ */
 
 /* Module initialization */
 int init_module(void)
