@@ -128,9 +128,6 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
             /* Call helper to get physical mapping for virtual address */
             mem->phys = get_physical(mem->virt);
 
-            /* Print information to kernel logs because we can */
-            printk(KERN_INFO "virt 0x%016lx maps to phys 0x%016lx\n", mem->virt, mem->phys);
-
             /* Give phys back to userspace */
             if (raw_copy_to_user((struct physicalview_memory *)addr, mem,
                         sizeof(struct physicalview_memory)))
