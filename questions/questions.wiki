@@ -6,8 +6,8 @@ on the provided OpenStack virtual machine.
 
 In this tutorial we will be examining the physical memory mapping
 of processes with the help of a kernel module that performs a 5-level
-page table walk for userspace addresses. You may wish to read about
-5-level paging (INSERT LINK TO 5-LEVEL PAGING).
+page table walk for userspace addresses. You may wish to
+[https://en.m.wikipedia.org/wiki/Intel_5-level_paging read about 5-level paging].
 
 To get started, we will first examine the source code for <tt>3000physicalview.c</tt> and <tt>3000memview2.c</tt>.
 
