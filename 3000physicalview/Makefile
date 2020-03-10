@@ -8,7 +8,7 @@ all: 3000memview2 3000physicalview.ko
 	make ARCH=x86_64 -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 3000memview2: 3000memview2.c
-	gcc -o 3000memview2 3000memview2.c
+	gcc -O2 -o 3000memview2 3000memview2.c
 
 insert:
 	sudo insmod 3000physicalview.ko
