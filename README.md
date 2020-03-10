@@ -2,6 +2,8 @@
 
 Loadable kernel module to run a page table walk on a userspace virtual address.
 
+I designed this as part of a tutorial for the students of COMP3000 Operating Systems.
+
 Exposes an `ioctl` call for returning physical mapping given virtual mapping.
 
 **WARNING:** This module is insecure. It should be used for teaching purposes only. Usage in a virtualized environment is recommended.
