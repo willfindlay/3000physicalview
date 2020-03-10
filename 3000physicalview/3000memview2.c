@@ -26,7 +26,7 @@
 
 char *gmsg = "Global Message";
 
-const int buffer_size = 10;
+const int buffer_size = 30;
 
 void report_memory(char *prefix, int fd, unsigned long virt)
 {
@@ -70,7 +70,6 @@ int main(int argc, char *argv[], char *envp[])
 
         report_memory("main:      ", fd, (unsigned long)&main);
 
-        report_memory("sbrk(0):   ", fd, (unsigned long)sbrk(0));
         report_memory("&buf:      ", fd, (unsigned long)&buf);
 
         for (i = 0; i<buffer_size; i++) {
@@ -78,7 +77,6 @@ int main(int argc, char *argv[], char *envp[])
                 snprintf(format, 16, "buf[%d]:    ", i);
                 report_memory(format, fd, (unsigned long)buf[i]);
         }
-        report_memory("sbrk(0):   ", fd, (unsigned long)sbrk(0));
 
         return 0;
 }
