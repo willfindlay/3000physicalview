@@ -75,7 +75,7 @@ int main(int argc, char *argv[], char *envp[])
 
         for (i = 0; i<buffer_size; i++) {
                 buf[i] = (char *) malloc(4096);
-                snprintf(&format, 16, "buf[%02d]:   ", i);
+                snprintf(format, 16, "buf[%02d]:   ", i);
                 report_memory(format, fd, (unsigned long)buf[i]);
         }
         report_memory("sbrk(0):   ", fd, (unsigned long)sbrk(0));
