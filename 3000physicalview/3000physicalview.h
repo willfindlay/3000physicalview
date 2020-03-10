@@ -31,6 +31,7 @@
 #include <linux/gfp.h>
 #include <linux/slab.h>
 #include <linux/mm.h>
+#include <linux/uaccess.h>
 #include <asm/uaccess.h>
 #include <asm/pgtable.h>
 #include <asm/pgtable_types.h>

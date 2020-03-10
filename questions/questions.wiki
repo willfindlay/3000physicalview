@@ -1,0 +1,39 @@
+==Introduction==
+WARNING: The commands and programs in this tutorial are potentially extremely dangerous and
+may result in crashes or loss of data. Additionally, questions may not work as expected on
+a machine other than the course VM. For that reason, you are stronly encouraged to do this tutorial
+on the provided OpenStack virtual machine.
+
+In this tutorial we will be examining the physical memory mapping
+of processes with the help of a kernel module that performs a 5-level
+page table walk for userspace addresses. You may wish to read about
+5-level paging (INSERT LINK TO 5-LEVEL PAGING).
+
+To get started, we will first examine the source code for <tt>3000physicalview.c</tt> and <tt>3000memview2.c</tt>.
+
+==Getting Started==
+# Compile <tt>3000physicalview</tt> and <tt>3000memview2</tt> using the provided Makefile (i.e. by running <tt>make</tt>).
+# Insert <tt>3000physicalview</tt> by running <tt>make insert</tt>. Confirm that the module is inserted using <tt>lsmod</tt>.
+# Examine the call to <tt>copy_from_user</tt> and <tt>copy_to_user</tt> on lines 120 and 132 of <tt>3000physicalview.c</tt>. Consider the following:
+#* How are these functions different from <tt>put_user</tt> that we have seen in the previous tutorial?
+#* Why are these functions necessary? Couldn't we just access the userspace address directly? What would happen if we did?
+# <tt>3000physicalview</tt> exposes its API to userspace in the form of an <tt>ioctl(2)</tt> call. Consider the following:
+#* What is an <tt>ioctl</tt>? How is it different from a <tt>read</tt> or <tt>write</tt> system call? Hint: check <tt>man 2 ioctl</tt>.
+#* How does <tt>3000physicalview</tt> implement its <tt>ioctl</tt>? What arguments does it take?
+#* How does <tt>3000memview2</tt> call the <tt>ioctl</tt>? What arguments does it pass to the <tt>ioctl</tt>?
+
+==Examining Physical Memory Mappings==
+# With <tt>3000physicalview</tt> inserted, run <tt>3000memview2</tt> and examine the output. Note that it presents virtual memory addresses on the left, and physical addresses on the right. Are these mappings consistent with what you expected?
+# Do you notice a pattern in the virtual addresses of <tt>buf[i]</tt>? Is this same pattern present in the physical addresses? Why or why not?
+# Run <tt>3000memview2</tt> a few more times and consider the following:
+#* Are the virtual addresses the same or different between runs? How about physical addresses?
+#* Some physical addresses don't seem to be changing between runs. Which ones? Why do you think this might be the case?
+# Spawn a root shell with <tt>sudo su</tt> and force the kernel to drop the virtual memory cache using <tt>sync && echo 3 > /proc/sys/vm/drop_caches</tt>. Run <tt>3000memview2</tt> one more time and note that the physical addresses that stayed the same previously have now changed. What do you think just happened?
+
+==Revisiting Trace==
+# Modify <tt>3000memview2.c</tt> by adding a call to <tt>sleep(10);<tt> at the beginning of <tt>main</tt>. This will give you a chance to run <tt>trace</tt> attached to its pid. Compile with the Makefile as before. For the following questions, run your new <tt>3000memview2</tt> in one terminal, and the <tt>trace</tt> command in another.
+#* Run <tt>trace -p `pidof 3000memview2` -K 'p::_copy_to_user'</tt> to get the kernel stack trace every time the module invokes <tt>copy_to_user</tt>. How does this differ from the stack trace for <tt>put_user</tt> from last tutorial?
+#* Run <tt>trace -p `pidof 3000memview2` -K 'p::_copy_from_user'</tt> to get the kernel stack trace every time the module invokes <tt>copy_from_user</tt>. Compare this stack trace with that of the previous question.
+# Now let's trace various kernel memory allocations outside of our module. Run the following trace commands:
+#* <tt>trace -M 100 -K 't:kmem:kmalloc printf "allocated %d bytes at address 0x%llx" args->bytes_alloc, args->ptr'</tt> to trace the next 100 slab allocations and print the kernel stack. You may wish to pipe this output into <tt>less</tt> to read it more easily. What do you notice about the kernel's virtual addresses compared to what you have seen in userspace? Hint: Check the most significant hex digits.
+#* <tt>trace -M 100 -K 't:kmem:mm_page_alloc printf "allocted 2^%d pages at page frame number %lu" args->order, args->pfn'</tt> to trace the next 100 page allocations and print the kernel stack. You may wish to pipe this output into <tt>less</tt> to read it more easily. Based on what you can see, does page allocation seem to differ from slab allocation? How so?

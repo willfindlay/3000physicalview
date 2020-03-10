@@ -117,7 +117,7 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
             }
 
             /* Get virt from userspace */
-            if (raw_copy_from_user(mem, (struct physicalview_memory *)addr,
+            if (copy_from_user(mem, (struct physicalview_memory *)addr,
                         sizeof(struct physicalview_memory)))
             {
                 printk(KERN_ERR "Unable to copy struct from user\n");
@@ -129,7 +129,7 @@ static long physicalview_ioctl(struct file *file, unsigned int cmd, unsigned lon
             mem->phys = get_physical(mem->virt);
 
             /* Give phys back to userspace */
-            if (raw_copy_to_user((struct physicalview_memory *)addr, mem,
+            if (copy_to_user((struct physicalview_memory *)addr, mem,
                         sizeof(struct physicalview_memory)))
             {
                 printk(KERN_ERR "Unable to copy struct to user\n");
@@ -167,7 +167,7 @@ static char *physicalview_devnode(struct device *device, umode_t *mode)
 /* Module initialization */
 int init_module(void)
 {
-    printk(KERN_INFO "3000physicalview initalizing\n");
+    printk(KERN_INFO "3000physicalview initializing\n");
 
     /* Register character device */
     major_number = register_chrdev(0, DEVICE_NAME, &fops);

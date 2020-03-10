@@ -57,7 +57,7 @@ int main(int argc, char *argv[], char *envp[])
 
         int fd = open("/dev/3000physicalview", O_RDONLY);
 
-        printf("Memory report\n");
+        printf("Memory map report (virtual -> physical)\n");
         report_memory("argv:      ", fd, (unsigned long)argv);
         report_memory("argv[0]:   ", fd, (unsigned long)argv[0]);
         report_memory("envp:      ", fd, (unsigned long)envp);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[], char *envp[])
 
         for (i = 0; i<buffer_size; i++) {
                 buf[i] = (char *) malloc(4096);
-                snprintf(format, 16, "buf[%02d]:    ", i);
+                snprintf(format, 16, "buf[%02d]:   ", i);
                 report_memory(format, fd, (unsigned long)buf[i]);
         }
 
