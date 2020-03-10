@@ -31,7 +31,7 @@ To get started, we will first examine the source code for <tt>3000physicalview.c
 # Spawn a root shell with <tt>sudo su</tt> and force the kernel to drop the virtual memory cache using <tt>sync && echo 3 > /proc/sys/vm/drop_caches</tt>. Run <tt>3000memview2</tt> one more time and note that the physical addresses that stayed the same previously have now changed. What do you think just happened?
 
 ==Revisiting Trace==
-# Modify <tt>3000memview2.c</tt> by adding a call to <tt>sleep(10);<tt> at the beginning of <tt>main</tt>. This will give you a chance to run <tt>trace</tt> attached to its pid. Compile with the Makefile as before. For the following questions, run your new <tt>3000memview2</tt> in one terminal, and the <tt>trace</tt> command in another.
+# Modify <tt>3000memview2.c</tt> by adding a call to <tt>sleep(10);</tt> at the beginning of <tt>main</tt>. This will give you a chance to run <tt>trace</tt> attached to its pid. Compile with the Makefile as before. For the following questions, run your new <tt>3000memview2</tt> in one terminal, and the <tt>trace</tt> command in another.
 #* Run <tt>trace -p `pidof 3000memview2` -K 'p::_copy_to_user'</tt> to get the kernel stack trace every time the module invokes <tt>copy_to_user</tt>. How does this differ from the stack trace for <tt>put_user</tt> from last tutorial?
 #* Run <tt>trace -p `pidof 3000memview2` -K 'p::_copy_from_user'</tt> to get the kernel stack trace every time the module invokes <tt>copy_from_user</tt>. Compare this stack trace with that of the previous question.
 # Now let's trace various kernel memory allocations outside of our module. Run the following trace commands:
