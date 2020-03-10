@@ -20,25 +20,39 @@ Example:
 
 ```c
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#define USERSPACE
 #include "3000physicalview.h"
 
-int var;
+char *gmsg = "Global Message";
 
-int main()
+const int buffer_size = 30;
+
+void report_memory(char *prefix, int fd, unsigned long virt)
 {
-  struct physicalview_memory mem = {
-    .virt = (unsigned long)&var;
-  };
+    struct physicalview_memory mem = {};
+    mem.virt = virt;
 
-  int fd = open("/dev/3000physicalview", O_RDONLY);
+    if (ioctl(fd, PHYSICALVIEW_WALK, (unsigned long)&mem))
+    {
+        fprintf(stderr, "Error making ioctl call\n");
+        return;
+    }
 
-  ioctl(fd, PHYSICALVIEW_WALK, (unsigned long)&mem);
+    if (!mem.phys)
+    {
+        printf("%s 0x%016lx -> UNKNOWN\n", prefix, mem.virt);
+        return;
+    }
 
-  printf("%lx maps to %lx\n", mem.virt, mem.phys);
-
-  return 0;
+    printf("%s 0x%016lx -> 0x%016lx\n", prefix, mem.virt, mem.phys);
 }
+
+...
+
 ```
