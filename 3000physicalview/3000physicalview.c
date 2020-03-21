@@ -79,7 +79,7 @@ static unsigned long get_physical(unsigned long addr)
     }
 
     /* Get physical address of page table entry */
-    pfn = pte->pte & PTE_PFN_MASK;
+    pfn = pte_pfn(*pte);
     phys = (pfn << PAGE_SHIFT) + (addr % PAGE_SIZE);
 
     return phys;
